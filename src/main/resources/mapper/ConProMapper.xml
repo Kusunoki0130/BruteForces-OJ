@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.ConProMapper">
+    <resultMap id="conProResultMap" type="com.bruteforces.demo.entity.ConPro">
+        <result column="con_id" jdbcType="INTEGER" property="conId" />
+        <result column="pro_id" jdbcType="INTEGER" property="proId" />
+    </resultMap>
+
+    <insert id="insertNewConPro" parameterType="com.bruteforces.demo.entity.ConPro">
+        INSERT INTO con_pro
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{conId, jdbcType=INTEGER},
+            #{proId, jdbcType=INTEGER},
+        </trim>
+    </insert>
+
+    <select id="findProbbyconId" parameterType="java.lang.Integer" resultMap="conProResultMap">
+        SELECT * FROM con_pro
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+    </select>
+</mapper>

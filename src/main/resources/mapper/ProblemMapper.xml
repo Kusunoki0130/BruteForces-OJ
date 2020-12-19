@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.ProblemMapper">
+    <resultMap id="proResultMap" type="com.bruteforces.demo.entity.Problem">
+        <!--private int proId;-->
+        <!--private String proTitle;-->
+        <!--private String proInfo;-->
+        <!--private String proInput;-->
+        <!--private String proOutput;-->
+        <!--private String proInputSample;-->
+        <!--private String ProOutputSample;-->
+        <!--private int proTimeLimit;-->
+        <!--private int proMemoryLimit;-->
+        <!--private int proSubmitted;-->
+        <!--private int proAccepted;-->
+        <!--private int proDataNum;-->
+        <!--private String proData;-->
+        <!--private int isHidden;-->
+        <result column="pro_id" property="proId" jdbcType="INTEGER"/>
+        <result column="pro_title" property="proTitle" jdbcType="VARCHAR"/>
+        <result column="pro_info" property="proInfo" jdbcType="VARCHAR"/>
+        <result column="pro_input" property="proInput" jdbcType="VARCHAR"/>
+        <result column="pro_output" property="proOutput" jdbcType="VARCHAR"/>
+        <result column="pro_inputsample" property="proInputSample" jdbcType="VARCHAR"/>
+        <result column="pro_outputsample" property="proOutputSample" jdbcType="VARCHAR"/>
+        <result column="pro_timelimit" property="proTimeLimit" jdbcType="INTEGER"/>
+        <result column="pro_memorylimit" property="proMemoryLimit" jdbcType="INTEGER"/>
+        <result column="pro_submitted" property="proSubmitted" jdbcType="INTEGER"/>
+        <result column="pro_accepted" property="proAccepted" jdbcType="INTEGER"/>
+        <result column="pro_datanum" property="proDataNum" jdbcType="INTEGER"/>
+        <result column="pro_data" property="proData" jdbcType="VARCHAR"/>
+        <result column="isHidden" property="isHidden" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insertNewProblem" parameterType="com.bruteforces.demo.entity.Problem" useGeneratedKeys="true" keyProperty="proId">
+        INSERT INTO problems
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            null,
+            #{proTitle, jdbcType=INTEGER},
+            #{proInfo, jdbcType=VARCHAR},
+            #{proInput, jdbcType=VARCHAR},
+            #{proOutput, jdbcType=VARCHAR},
+            #{proInputSample, jdbcType=VARCHAR},
+            #{proOutputSample, jdbcType=VARCHAR},
+            #{proTimeLimit, jdbcType=INTEGER},
+            #{proMemoryLimit, jdbcType=INTEGER},
+            #{proSubmitted, jdbcType=INTEGER},
+            #{proAccepted, jdbcType=INTEGER},
+            #{proDataNum, jdbcType=INTEGER},
+            #{proData, jdbcType=VARCHAR},
+            #{isHidden, jdbcType=INTEGER},
+        </trim>
+    </insert>
+
+    <delete id="deleteProblemByproId" parameterType="java.lang.Integer">
+        DELETE FROM problems
+        WHERE pro_id = #{proId, jdbcType=INTEGER}
+    </delete>
+
+    <select id="getAll" resultMap="proResultMap">
+        SELECT * from problems
+    </select>
+
+    <update id="setHiddenTrue" parameterType="java.lang.Integer">
+        UPDATE problems SET
+          isHidden = 1
+          WHERE pro_id = #{proId, jdbcType=INTEGER}
+    </update>
+
+    <update id="setHiddenFalse" parameterType="java.lang.Integer">
+        UPDATE problems SET
+          isHidden = 0
+          WHERE pro_id = #{proId, jdbcType=INTEGER}
+    </update>
+
+    <update id="updatePro" parameterType="com.bruteforces.demo.entity.Problem">
+        UPDATE  problems SET
+          pro_submitted = #{proSubmitted, jdbcType=INTEGER},
+          pro_accepted  = #{proAccepted, jdbcType=INTEGER}
+          WHERE pro_id = #{proId, jdbcType=INTEGER}
+    </update>
+
+    <select id="findProblemById" parameterType="java.lang.Integer" resultMap="proResultMap">
+        SELECT * FROM problems
+        WHERE pro_id = #{proId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findProblemByTitle" parameterType="java.lang.String" resultMap="proResultMap">
+        SELECT * FROM problems
+        WHERE pro_title = #{proTitle, jdbcType=VARCHAR}
+    </select>
+
+</mapper>

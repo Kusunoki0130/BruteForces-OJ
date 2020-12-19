@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.ConProStuMapper">
+    <!--private int conId;-->
+    <!--private int proId;-->
+    <!--private int stuId;-->
+    <!--private int ifAccepted;-->
+    <!--private int attempTimes;-->
+    <!--private Timestamp solveTime;-->
+    <resultMap id="cpsResultMap" type="com.bruteforces.demo.entity.ConProStu">
+        <result column="cps" jdbcType="VARCHAR" property="cpsId"/>
+        <result column="con_id" jdbcType="INTEGER" property="conId" />
+        <result column="pro_id" jdbcType="INTEGER" property="proId" />
+        <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+        <result column="ifAccepted" jdbcType="INTEGER" property="ifAccepted"/>
+        <result column="attemptTimes" jdbcType="INTEGER" property="attempTimes"/>
+        <result column="solveTime" jdbcType="TIMESTAMP" property="solveTime"/>
+    </resultMap>
+
+    <insert id="insertNewConProStu" parameterType="com.bruteforces.demo.entity.ConProStu">
+        INSERT INTO con_pro_stu
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{cpsId, jdbcType=VARCHAR},
+            #{conId, jdbcType=INTEGER},
+            #{proId, jdbcType=INTEGER},
+            #{stuId, jdbcType=INTEGER},
+            #{ifAccepted, jdbcType=INTEGER},
+            #{attempTimes, jdbcType=INTEGER},
+            null
+        </trim>
+    </insert>
+
+    <select id="findByConId" parameterType="java.lang.Integer" resultMap="cpsResultMap">
+        SELECT * FROM con_pro_stu
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findcpsById" parameterType="java.lang.String" resultMap="cpsResultMap">
+        SELECT * FROM con_pro_stu
+        WHERE cps = #{cpsId, jdbcType=INTEGER}
+    </select>
+
+    <update id="updateCPS" parameterType="com.bruteforces.demo.entity.ConProStu">
+        UPDATE con_pro_stu SET
+          ifAccepted = #{ifAccepted, jdbcType=INTEGER},
+          attemptTimes = #{attempTimes, jdbcType=INTEGER},
+          solveTime = #{solveTime, jdbcType=TIMESTAMP}
+        WHERE cps = #{cpsId, jdbcType=VARCHAR}
+    </update>
+</mapper>

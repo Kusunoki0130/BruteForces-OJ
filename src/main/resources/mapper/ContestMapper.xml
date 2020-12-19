@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.ContestMapper">
+    <resultMap id="contestResultMap" type="com.bruteforces.demo.entity.Contest">
+        <result column="con_id" jdbcType="INTEGER" property="conId" />
+        <result column="con_title" jdbcType="VARCHAR" property="conTitle" />
+        <result column="ad_id" jdbcType="INTEGER" property="adminId" />
+        <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="participate" jdbcType="INTEGER" property="participate"/>
+    </resultMap>
+
+    <insert id="insertNewContest" parameterType="com.bruteforces.demo.entity.Contest" useGeneratedKeys="true" keyProperty="conId">
+        INSERT INTO contests
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            null,
+            #{conTitle, jdbcType=VARCHAR},
+            #{adminId, jdbcType=INTEGER},
+            #{startTime, jdbcType=TIMESTAMP},
+            #{endTime, jdbcType=TIMESTAMP},
+            #{participate, jdbcType=INTEGER}
+        </trim>
+    </insert>
+
+    <select id="getAll" resultMap="contestResultMap">
+        SELECT * FROM contests ORDER BY startTime DESC
+    </select>
+
+    <select id="findContestById" parameterType="java.lang.Integer" resultMap="contestResultMap">
+        SELECT * FROM contests
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+    </select>
+
+    <update id="updateContest" parameterType="com.bruteforces.demo.entity.Contest">
+        UPDATE contests SET
+          con_title = #{conTitle, jdbcType=VARCHAR},
+          startTime = #{startTime, jdbcType=TIMESTAMP},
+          endTime = #{endTime, jdbcType=TIMESTAMP},
+          participate = #{participate, jdbcType=INTEGER}
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+    </update>
+
+
+</mapper>

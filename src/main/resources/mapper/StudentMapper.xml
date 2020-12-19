@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.StudentMapper">
+    <resultMap id="stuResultMap" type="com.bruteforces.demo.entity.Student">
+        <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+        <result column="stu_username" jdbcType="VARCHAR" property="stuUsername" />
+        <result column="stu_password" jdbcType="VARCHAR" property="stuPassword" />
+        <result column="stu_submitted" jdbcType="INTEGER" property="stuSubmitted" />
+        <result column="stu_sloved" jdbcType="INTEGER" property="stuSloved" />
+        <result column="stu_email" jdbcType="VARCHAR" property="stuEmail" />
+        <result column="stu_phone" jdbcType="VARCHAR" property="stuPhone" />
+    </resultMap>
+
+    <insert id="insertNewStudent" parameterType="com.bruteforces.demo.entity.Student">
+        INSERT  INTO students
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+          null,
+          #{stuUsername, jdbcType=VARCHAR},
+          #{stuPassword, jdbcType=VARCHAR},
+          #{stuSubmitted, jdbcType=INTEGER},
+          #{stuSolved, jdbcType=INTEGER},
+          #{stuEmail, jdbcType=VARCHAR},
+          #{stuPhone, jdbcType=VARCHAR},
+        </trim>
+    </insert>
+
+
+    <select id="selectStudentByStuId" parameterType="java.lang.Integer" resultMap="stuResultMap">
+        SELECT * FROM students
+        WHERE stu_id = #{stuId, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectStudentByStuUsername" parameterType="java.lang.String" resultMap="stuResultMap">
+        SELECT * FROM students
+        WHERE stu_username = #{stuUsername, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateStudent" parameterType="com.bruteforces.demo.entity.Student">
+        UPDATE students SET
+          stu_username = #{stuUsername, jdbcType=VARCHAR},
+          stu_password = #{stuPassword, jdbcType=VARCHAR},
+          stu_submitted = #{stuSubmitted, jdbcType=INTEGER},
+          stu_solved = #{stuSolved, jdbcType=INTEGER},
+          stu_email = #{stuEmail, jdbcType=VARCHAR},
+          stu_phone = #{stuPhone, jdbcType=VARCHAR}
+        WHERE stu_id = #{stuId, jdbcType=INTEGER}
+    </update>
+</mapper>

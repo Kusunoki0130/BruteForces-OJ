@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Admin</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <style>
+        a:link {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="panel panel-success">
+    <div class="panel-heading"><h1>Admin</h1></div>
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <p>
+                <h2>Problem</h2></p>
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="glyphicon glyphicon-th-list"><a href="/admin/ProblemList"> ProblemList</a></span>
+                    </li>
+                    <li class="list-group-item"><span class="glyphicon glyphicon-pencil"><a href="/admin/addProblem"> Add new problem</a></span>
+                    </li>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <p>
+                <h2>Contest</h2></p>
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="glyphicon glyphicon-th-list"><a href="/admin/ContestList"> ContestList</a></span>
+                    </li>
+                    <li class="list-group-item"><span class="glyphicon glyphicon-pencil"><a href="/admin/addContest"> Add new contest</a></span>
+                    </li>
+                </ul>
+            </li>
+            <li class="list-group-item">
+                <p>
+                <h2>Blog</h2></p>
+                <ul class="list-group">
+                    <li class="list-group-item"><span class="glyphicon glyphicon-th-list"><a href="/admin/blogList"> BlogList</a></span>
+                    </li>
+                    <li class="list-group-item"><span class="glyphicon glyphicon-pencil"><a href="/admin/addBlog"> Add new blog</a></span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+<script th:src="@{/jQuery/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+</html>

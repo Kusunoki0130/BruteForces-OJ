@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>ContestRank</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .panel {
+            margin-left: 5%;
+            margin-right: 5%;
+            font-size: 20px;
+        }
+        .table {
+            text-align: center;
+        }
+        .fontSmall {
+            font-size: 15px;
+        }
+        .tru_body {
+            background-color: rgba(255, 221, 170, .1);
+        }
+    </style>
+</head>
+<body onload="constructRank()" class="tru_body">
+<div th:include="ClientEnd/navbar_stu::html"></div>
+<!--玄学，这个是真的吐了，下面的hidden删掉之后所有下拉菜单无效-->
+<!--<div class="panel panel-success" hidden>-->
+    <!--<div th:include="ClientEnd/navbar_stu::html" hidden></div>-->
+<!--</div>-->
+    <div class="panel panel-success">
+        <div class="panel-heading">RankList</div>
+        <div class="panel-body" id="tb"></div>
+    </div>
+<div class="navbar-fixed-bottom" style="font-size: 20px">
+    <ol class="breadcrumb" style="background-color: transparent; ">
+        <li><a href="/">Index</a></li>
+        <li><a href="/ContestList">ContestList</a></li>
+        <li><a th:href="@{/ContestDetail(conId=${conId})}" th:text="'Contest.Id '+${conId}"></a></li>
+        <li class="active">ContestRank</li>
+    </ol>
+</div>
+</body>
+<script th:inline="javascript">
+    function GetDateDiff(startTime, endTime, diffType) {
+        startTime = startTime.replace(/\-/g, "/");
+        endTime = endTime.replace(/\-/g, "/");
+        diffType = diffType.toLowerCase();
+        var sTime = new Date(startTime);
+        var eTime = new Date(endTime);
+        var divNum = 1;
+        switch (diffType) {
+            case"second":
+                divNum = 1000;
+                break;
+            case"minute":
+                divNum = 1000 * 60;
+                break;
+            case"hour":
+                divNum = 1000 * 3600;
+                break;
+            case"day":
+                divNum = 1000 * 3600 * 24;
+                break;
+            default:
+                break;
+        }
+        return parseInt((eTime.getTime() - sTime.getTime()) / parseInt(divNum));
+    }
+    function transformTime(nowTime) {
+        var tmpTime = nowTime.split("T");
+        nowTime = tmpTime[0] + " " + tmpTime[1];
+        tmpTime = nowTime.split(".");
+        return tmpTime[0];
+    }
+    function constructRank() {
+        var startTime = [[${startTime}]];
+        var cpsList=[
+                [# th:each="cps : ${cpsList}"]
+                    [[${cps}]],
+                [/]
+        ];
+        cpsList.sort(function (a, b) {
+            return a["stuId"]-b["stuId"];
+        });
+        var stuList=[
+                [# th:each="stu : ${stuList}"]
+                    [[${stu}]],
+                [/]
+        ];
+        stuList.sort(function (a, b) {
+            return a["stuId"]-b["stuId"];
+        })
+        var stuMap = {};
+        var proMap = {};
+        var table = [];
+        var firstAcc = [];
+        var tempAcTime = [];
+        var cntStu = 0;
+        var cntPro = 0;
+        var colorTable = [];
+        for(var i=0;i<cpsList.length;++i) {
+            var cps = cpsList[i];
+            var iStu = -1;
+            var iPro = -1;
+            if (!stuMap.hasOwnProperty(cps["stuId"])) {
+                table[cntStu] = new Object();
+                table[cntStu]["acc"] = 0;
+                table[cntStu]["ttsc"] = 0;
+                table[cntStu]["hashpos"] = cntStu;
+                table[cntStu]["stuName"] = stuList[cntStu]["stuUsername"];
+                colorTable[cntStu] = [];
+                stuMap[cps["stuId"]] = cntStu++;
+            }
+            if (!proMap.hasOwnProperty(cps["proId"])) {
+                proMap[cps["proId"]] = cntPro++;
+            }
+            iStu = stuMap[cps["stuId"]];
+            iPro = proMap[cps["proId"]];
+            table[iStu][String.fromCharCode(iPro+65)] = {};
+            table[iStu][String.fromCharCode(iPro+65)]["tries"] = 0;
+            table[iStu][String.fromCharCode(iPro+65)]["accTime"] = 0;
+            if (cps["ifAccepted"]===1) {
+                colorTable[iStu][iPro] = "LightGreen";
+                table[iStu][String.fromCharCode(iPro+65)]["tries"] = cps["ifAccepted"] + cps["attempTimes"];
+                ++table[iStu]["acc"];
+                table[iStu][String.fromCharCode(iPro+65)]["accTime"] = GetDateDiff(startTime, transformTime(cps["solveTime"]), "minute");
+                table[iStu]["ttsc"] += table[iStu][String.fromCharCode(iPro+65)]["accTime"];
+                table[iStu]["ttsc"] += 20 * cps["attempTimes"];
+                if (tempAcTime[iPro]==null || cps["solveTime"]<tempAcTime[iPro]) {
+                    tempAcTime[iPro] = cps["solveTime"];
+                    firstAcc[iPro] = iStu;
+                }
+            }
+            else {
+                if (cps["attempTimes"]!==0) {
+                    colorTable[iStu][iPro] = "Red";
+                    table[iStu][String.fromCharCode(iPro+65)]["tries"] = -cps["attempTimes"];
+                }
+                else {
+                    colorTable[iStu][iPro] = "White";
+                }
+            }
+        }
+        console.log("before");
+        console.log(table);
+        table.sort(function (a, b) {
+            if (a["acc"]===b["acc"]) {
+                return a["ttsc"]-b["ttsc"];
+            }
+            return b["acc"]-a["acc"];
+        });
+        console.log("after");
+        console.log(table);
+        for (var i=0;i<table.length;++i) {
+            table[i]["rank"] = i+1;
+        }
+        for (var i=0;i<cntPro;++i) {
+            if (firstAcc[i]!=null) {
+                colorTable[firstAcc[i]][i] = "Green";
+            }
+        }
+        console.log(colorTable);
+        createTable(table, cntPro, colorTable);
+    }
+    function  createTable(rankList, cntPro, colorTable) {
+        var tab = document.createElement("table");
+        tab.className += "rankTable";
+        var col = cntPro;
+        var row = rankList.length;
+        var tr = tab.insertRow(tab.rows.length);
+        var td = tr.insertCell(tr.cells.length);
+        td.innerHTML = "Rank";
+        td = tr.insertCell(tr.cells.length);
+        td.innerHTML = "User.Name";
+        td = tr.insertCell(tr.cells.length);
+        td.innerHTML = "Score";
+        td = tr.insertCell(tr.cells.length);
+        td.innerHTML = "Penalty";
+        for (var i=0;i<col;++i) {
+            td = tr.insertCell(tr.cells.length);
+            td.innerHTML = String.fromCharCode(i + 65);
+        }
+        for (var i=0;i<row;++i) {
+            tr = tab.insertRow(tab.rows.length);
+            td = tr.insertCell(tr.cells.length);
+            td.innerHTML = i+1;
+            td = tr.insertCell(tr.cells.length);
+            td.innerHTML = rankList[i]["stuName"];
+            td = tr.insertCell(tr.cells.length);
+            td.innerHTML = rankList[i]["acc"];
+            td = tr.insertCell(tr.cells.length);
+            td.innerHTML = rankList[i]["ttsc"];
+            for (var j=0;j<col;++j) {
+                td = tr.insertCell(tr.cells.length);
+                td.style.backgroundColor = colorTable[rankList[i]["hashpos"]][j];
+                if (colorTable[rankList[i]["hashpos"]][j]==="Green" || colorTable[rankList[i]["hashpos"]][j]==="LightGreen") {
+                    var str = "<div class='fontSmall'>" + rankList[i][String.fromCharCode(j+65)]["accTime"].toString() + "</div>"
+                            + "<div class='fontSmall'>(" + rankList[i][String.fromCharCode(j+65)]["tries"].toString() + " "
+                            + (rankList[i][String.fromCharCode(j+65)]["tries"]<2?"try":"tries") + ")</div>";
+                    console.log(str);
+                    td.innerHTML = str;
+                    console.log(td.innerHTML);
+                }
+                else {
+                    td.innerHTML = "<div class='fontSmall'>(" + (-rankList[i][String.fromCharCode(j+65)]["tries"]).toString() + " "
+                                 + (-rankList[i][String.fromCharCode(j+65)]["tries"]<2?"try":"tries") + ")</div>";
+                }
+
+            }
+        }
+        tab.className += " table";
+        document.querySelector("#tb").appendChild(tab);
+    }
+</script>
+</html>

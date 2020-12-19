@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.AdminMapper">
+    <resultMap id="adminResultMap" type="com.bruteforces.demo.entity.Admin">
+        <result column="ad_id" jdbcType="INTEGER" property="adminId" />
+        <result column="ad_username" jdbcType="VARCHAR" property="adminUsername" />
+        <result column="ad_password" jdbcType="VARCHAR" property="adminPassword" />
+    </resultMap>
+
+    <select id="selectAdminByAdminId" parameterType="java.lang.Integer" resultMap="adminResultMap">
+        select * from admins
+        WHERE ad_id = #{adminId, jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAdminByAdminUsername" parameterType="java.lang.String" resultMap="adminResultMap">
+        select * from admins
+        WHERE ad_username = #{adminUsername, jdbcType=VARCHAR}
+    </select>
+
+    <update id="updateAdmin" parameterType="com.bruteforces.demo.entity.Admin">
+        UPDATE admins SET
+          ad_username = #{adminUsername, jdbcType=VARCHAR},
+          ad_password = #{adminPassword, jdbcType=VARCHAR}
+        WHERE ad_id = #{adminId, jdbcType=INTEGER}
+    </update>
+</mapper>

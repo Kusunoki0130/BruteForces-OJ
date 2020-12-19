@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.ConStuMapper">
+    <resultMap id="csResultMap" type="com.bruteforces.demo.entity.ConStu">
+        <result column="con_id" jdbcType="INTEGER" property="conId" />
+        <result column="stu_id" jdbcType="INTEGER" property="stuId" />
+    </resultMap>
+
+    <insert id="insertNewConStu" parameterType="com.bruteforces.demo.entity.ConStu">
+        INSERT INTO con_stu
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{conId, jdbcType=INTEGER},
+            #{stuId, jdbcType=INTEGER},
+        </trim>
+    </insert>
+
+    <select id="getAll" resultMap="csResultMap">
+        SELECT * FROM con_stu
+    </select>
+
+    <select id="getConByStuId" resultMap="csResultMap">
+        SELECT * FROM con_stu
+        WHERE stu_id = #{stuId, jdbcType=INTEGER}
+    </select>
+
+    <select id="getStuByConId" resultMap="csResultMap">
+        SELECT * FROM con_stu
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+    </select>
+
+    <select id="findByConStu" resultMap="csResultMap" parameterType="com.bruteforces.demo.entity.ConStu">
+        SELECT * FROM con_stu
+        WHERE con_id = #{conId, jdbcType=INTEGER} AND stu_id = #{stuId, jdbcType=INTEGER}
+    </select>
+
+</mapper>

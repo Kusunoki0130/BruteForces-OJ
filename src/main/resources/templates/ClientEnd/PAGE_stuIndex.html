@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Welcome to BruteForces</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .size {
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+        .panel {
+            font-size: 18px;
+        }
+        .tru_body {
+            background-color: rgba(255, 221, 170, .1);
+        }
+    </style>
+</head>
+
+<body class="tru_body">
+<div th:include="ClientEnd/navbar_stu::html"></div>
+<div class="panel panel-success size" style="background-color: rgba(255, 255, 221, .8)">
+    <div class="panel-body">
+        <div th:include="ClientEnd/welcome::html"></div>
+    </div>
+</div>
+<div class="navbar-bottom" style="font-size: 20px;">
+    <ol class="breadcrumb" style="background-color: transparent; ">
+        <li class="active">Index</li>
+    </ol>
+</div>
+</body>
+<script th:src="@{/jQuery/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+</html>

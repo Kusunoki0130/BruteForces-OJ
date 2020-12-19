@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bruteforces.demo.dao.SubmissionMapper">
+    <resultMap id="subResultMap" type="com.bruteforces.demo.entity.Submission">
+        <result column="sub_id" property="subId" jdbcType="INTEGER"/>
+        <result column="con_id" property="conId" jdbcType="INTEGER"/>
+        <result column="pro_id" property="proId" jdbcType="INTEGER"/>
+        <result column="stu_id" property="stuId" jdbcType="INTEGER"/>
+        <result column="sub_src" property="subSrc" jdbcType="VARCHAR"/>
+        <result column="sub_time" property="subTime" jdbcType="TIMESTAMP"/>
+        <result column="result" property="result" jdbcType="VARCHAR"/>
+        <result column="language" property="language" jdbcType="VARCHAR"/>
+        <result column="timelim" property="subTimeLimit" jdbcType="INTEGER"/>
+        <result column="memorylim" property="subMemoryLimit" jdbcType="INTEGER"/>
+        <result column="length" property="subLength" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <insert id="insertNewSubmission" parameterType="com.bruteforces.demo.entity.Submission">
+        INSERT INTO submissions
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            null,
+            #{conId, jdbcType=INTEGER},
+            #{proId, jdbcType=INTEGER},
+            #{stuId, jdbcType=INTEGER},
+            #{subSrc, jdbcType=VARCHAR},
+            #{subTime, jdbcType=TIMESTAMP},
+            #{result, jdbcType=VARCHAR},
+            #{language, jdbcType=VARCHAR},
+            #{subTimeLimit, jdbcType=INTEGER},
+            #{subMemoryLimit, jdbcType=VARCHAR},
+            #{subLength, jdbcType=INTEGER},
+        </trim>
+    </insert>
+
+    <select id="getAll" resultMap="subResultMap">
+        SELECT * FROM submissions ORDER BY sub_time DESC
+    </select>
+
+    <select id="getSubByconId" resultMap="subResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM submissions
+        WHERE con_id = #{conId, jdbcType=INTEGER}
+        ORDER BY sub_Time DESC
+    </select>
+
+    <select id="selectSubmissionById" parameterType="java.lang.Integer" resultMap="subResultMap">
+        SELECT * FROM submissions
+        WHERE sub_id = #{subId, jdbcType=INTEGER}
+    </select>
+
+    <select id="getSubBystuId" resultMap="subResultMap" parameterType="java.lang.Integer">
+        SELECT * FROM submissions
+        WHERE stu_id = #{stuId, jdbcType=INTEGER}
+        ORDER BY sub_time DESC
+    </select>
+
+</mapper>

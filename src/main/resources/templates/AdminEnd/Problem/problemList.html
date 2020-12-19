@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>ProblemList</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        .panel {
+            margin-left: 15%;
+            margin-right: 15%;
+            font-size: 20px;
+        }
+
+        .table {
+            text-align: center;
+        }
+        body {
+            background-color: rgba(255, 221, 170, .1);
+        }
+    </style>
+</head>
+<body onload="hiddencheck()">
+<div th:include="AdminEnd/navbar_admin::html"></div>
+<!--玄学，这个是真的吐了，下面的hidden删掉之后所有下拉菜单无效-->
+<div class="panel panel-success" hidden>
+    <div th:include="AdminEnd/navbar_admin::html" hidden></div>
+</div>
+<div class="panel panel-success">
+    <div class="panel-heading">ProblemList</div>
+    <div class="panel-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <input type="checkbox" id="seAll" onclick="selectAll()"/> Select all
+            </li>
+            <li class="list-group-item">
+                <input class="btn-primary" type="button" value="Hide selected items" onclick="postdeleteList()">
+            </li>
+        </ul>
+    </div>
+    <table class="table">
+        <tr>
+            <td>ID</td>
+            <td width="800px">Title</td>
+            <td>Solved Count</td>
+            <td>Submitted Count</td>
+            <td>Selected</td>
+        </tr>
+        <tr th:each="u : ${list}">
+            <td th:text="${u.proId}"></td>
+            <td><a th:href="@{/admin/problem(proId=${u.proId})}" th:text="${u.proTitle}"></a></td>
+            <td th:text="${u.proAccepted}"></td>
+            <td th:text="${u.proSubmitted}"></td>
+            <td>
+                <input type="text" hidden="hidden" name="hids" th:value="${u.isHidden}">
+                <input type="checkbox" name="probs" th:value="${u.proId}"/>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="navbar-bottom" style="font-size: 20px">
+    <ol class="breadcrumb" style="background-color: transparent; ">
+        <li><a href="/admin">Admin</a></li>
+        <li class="active">ProblemList</li>
+    </ol>
+</div>
+</body>
+<script th:src="@{/jQuery/jquery-3.5.1.min.js}" type="text/javascript"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+<script type="text/javascript">
+    function hiddencheck() {
+        var probList = document.getElementsByName("hids");
+        console.log(probList);
+        var probs = document.getElementsByName("probs");
+        for (var i = 0; i < probList.length; ++i) {
+            if (probList[i].value !== "0") {
+                probs[i].checked = true;
+            } else {
+                probs[i].checked = false;
+            }
+        }
+    }
+
+    function selectAll() {
+        var flag = document.getElementById("seAll").checked;
+        var probs = document.getElementsByName("probs");
+        if (flag) {
+            for (var i = 0; i < probs.length; ++i) {
+                probs[i].checked = true;
+            }
+        } else {
+            for (var i = 0; i < probs.length; ++i) {
+                probs[i].checked = false;
+            }
+        }
+    }
+
+    function postdeleteList() {
+        var list0 = [];
+        var list1 = [];
+        var probs = document.getElementsByName("probs");
+        for (var i = 0; i < probs.length; ++i) {
+            var num = parseInt(probs[i].value, 10);
+            if (probs[i].checked === true) {
+                list1.push(num);
+            } else {
+                list0.push(num);
+            }
+        }
+        console.log(list0);
+        console.log(list1)
+        $.ajax({
+            url: "/admin/ProblemHidden",
+            method: "POST",
+            data: {
+                proList0: list0.toLocaleString(),
+                proList1: list1.toLocaleString()
+            },
+            dataType: "json",
+            success: function () {
+                window.location.reload();
+            },
+            error: function () {
+                window.location.reload();
+            }
+        })
+    }
+</script>
+</html>

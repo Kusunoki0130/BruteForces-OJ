@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=chrome">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Online Ide</title>
+    <link th:href="@{/bootstrap/css/bootstrap.css}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" th:href="@{/editormd/css/editormd.css}"/>
+    <link rel="stylesheet" th:href="@{/highlight/styles/railscasts.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/lib/codemirror.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/theme/twilight.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/theme/idea.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/theme/dracula.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/theme/3024-day.css}">
+    <link rel="stylesheet" th:href="@{/codemirror/theme/bespin.css}">
+    <style type="text/css">
+        .panel {
+            font-size: 20px;
+        }
+
+        #code {
+            width: 100%;
+            height: 600px;
+        }
+
+        .siz {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: row
+        }
+
+        textarea {
+            resize: none;
+        }
+        .tru_body {
+            background-color: rgba(255, 221, 170, .1);
+        }
+    </style>
+</head>
+<body class="tru_body">
+<div th:include="ClientEnd/navbar_stu::html"></div>
+<!--玄学，这个是真的吐了，下面的hidden删掉之后所有下拉菜单无效-->
+<div class="panel panel-success" hidden>
+    <div th:include="ClientEnd/navbar_stu::html" hidden></div>
+</div>
+<div class="container-fluid siz" style="height: 100%">
+    <div class="panel panel-success" style="height: 100%; width: 50%;">
+        <div class="panel-body">
+            Theme:
+            <select id="theme" onclick="changeTheme()">
+                <option value="idea">idea</option>
+                <option value="twilight">twilight</option>
+                <option value="dracula">dracula</option>
+                <option value="3024-day">3024-day</option>
+                <option value="bespin">bespin</option>
+            </select>
+            Language:
+            <select id="lan" onclick="changelan()">
+                <option value="text/x-csrc">C</option>
+                <option value="text/x-c++src">C++</option>
+                <option value="text/x-java">Java</option>
+            </select>
+            <input class="btn btn-primary pull-right" value="Submit" onclick="postcode()" style="width: 100px"/>
+        </div>
+        <hr/>
+        <div style="height: 100%;">
+            <textarea id="code" name="code" style="height: 500px;" rows="30"></textarea>
+        </div>
+    </div>
+    <div class="panel panel-success" style="height: 100%; width: 50%;">
+        <div class="panel-body">
+<!--            <ul class="list-group">-->
+<!--                <li class="list-group-item">TimeLimit(ms): <input type="text" id="TimeLimit" value="10000" style="width: 100px"/></li>-->
+<!--                <li class="list-group-item">MemoryLimit(mb): <input type="text" id="MemoryLimit" value="64" style="width: 100px"/></li>-->
+<!--            </ul>-->
+            TimeLimit(ms): <input type="text" id="TimeLimit" value="10000" style="width: 100px"/>
+            MemoryLimit(mb): <input type="text" id="MemoryLimit" value="64" style="width: 100px"/>
+        </div>
+
+        <div class="panel-heading">Input</div>
+        <textarea style="height: 60px; width: 100%" id="input"></textarea>
+<!--        <div class="panel-heading">Output</div>-->
+<!--        <textarea style="height: 160px; width: 100%" id="output"></textarea>-->
+        <div class="panel-heading">Result</div>
+        <textarea style="height: 320px; width: 100%" id="result" readonly="readonly"></textarea>
+    </div>
+</div>
+
+
+</body>
+<script th:src="@{/showdown/dist/showdown.js}"></script>
+<script th:src="@{/jQuery/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/bootstrap/js/bootstrap.js}"></script>
+<script th:src="@{/editormd/editormd.min.js}"></script>
+<script th:src="@{/highlight/highlight.pack.js}"></script>
+<script th:src="@{/codemirror/lib/codemirror.js}"></script>
+<script th:src="@{/codemirror/mode/clike/clike.js}"></script>
+<script th:src="@{/codemirror/addon/edit/closebrackets.js}"></script>
+<script th:src="@{/codemirror/addon/edit/closetag.js}"></script>
+<script th:src="@{/codemirror/addon/edit/continuelist.js}"></script>
+<script th:src="@{/codemirror/addon/edit/matchbrackets.js}"></script>
+<script th:src="@{/codemirror/addon/edit/matchtags.js}"></script>
+<script th:src="@{/codemirror/addon/edit/trailingspace.js}"></script>
+<script>
+    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: "text/x-csrc",
+        lineNumbers: true,
+        theme: "idea",
+        lineWrapping: true,
+        foldGutter: true,
+        matchBrackets: true,
+        autoCloseBrackets: true,
+        rows: 30,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+    });
+    editor.setSize('', '450px');
+
+    function changelan() {
+        var lan = document.getElementById("lan");
+        var index = lan.selectedIndex;
+        editor.setOption("mode", lan[index].value);
+    }
+
+    function changeTheme() {
+        var theme = document.getElementById("theme");
+        var index = theme.selectedIndex;
+        editor.setOption("theme", theme[index].value);
+    }
+
+    function postcode() {
+        var code = editor.getValue();
+        var input = document.getElementById("input").value;
+        var output = "111";
+        var lanList = document.getElementById("lan");
+        var timeLimit = document.getElementById("TimeLimit").value;
+        var memoryLimit = document.getElementById("MemoryLimit").value;
+        var index = lan.selectedIndex;
+        var language = lanList[index].value;
+        if (language === "text/x-csrc") {
+            language = "C";
+        }
+        else if (language === "text/x-c++src"){
+            language = "C++";
+        }
+        else {
+            language = "Java";
+        }
+        // console.log(language);
+        $.ajax({
+            url: "/OnlineIDESub",
+            method: "post",
+            data: {
+                code: code.toString(),
+                input: input.toString(),
+                output: output.toString(),
+                language: language.toString(),
+                timeLimit: parseInt(timeLimit, 10),
+                memoryLimit: parseInt(memoryLimit, 10)
+            },
+            dataType: "json",
+            success: function (data) {
+                // console.log(data);
+                document.getElementById("result").innerText = data["output"];
+                // document.getElementById("result").innerText = data;
+            },
+            error: function () {
+                console.log("error");
+            }
+        });
+    }
+</script>
+</html>
